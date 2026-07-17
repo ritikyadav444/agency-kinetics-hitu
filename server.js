@@ -1,7 +1,8 @@
 const app = require('./app')
+const path = require('path')
 const dotenv = require("dotenv");
+dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 const connectDatabase = require("./config/database")
-dotenv.config()
 
 const PORT = process.env.PORT || 4001
 

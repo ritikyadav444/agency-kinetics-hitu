@@ -3,12 +3,12 @@ const app = express();
 // const mongoose = require('mongoose')
 const cookieParser = require("cookie-parser");
 const cors = require('cors')
+const path = require('path')
 const dotenv = require("dotenv");
-dotenv.config()
+dotenv.config({ path: path.join(__dirname, 'config', '.env') })
 const helmet = require('helmet')
 const morgan = require('morgan')
 const { v4: uuidv4 } = require('uuid')
-const path = require('path')
 const cronJob = require('./cronJob')
 
 app.use(helmet())
@@ -22,12 +22,14 @@ app.use((req, res, next) => {
 // const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 // app.use(awsServerlessExpressMiddleware.eventContext())
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:4001',
-  "https://dashboard.agencykinetics.com",
-  "https://app.agencykinetics.com"
-];
+// const allowedOrigins = [
+//   'http://localhost:3000',
+//   'http://localhost:4001',
+//   "https://dashboard.agencykinetics.com",
+//   "https://app.agencykinetics.com"
+// ];
+
+const allowedOrigins = ['*']; // Allow all origins
 
 const corsOptions = {
   origin: (origin, callback) => {
