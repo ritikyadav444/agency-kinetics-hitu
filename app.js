@@ -32,9 +32,13 @@ app.use((req, res, next) => {
 const allowedOrigins = ['*']; // Allow all origins
 
 const corsOptions = {
-  origin: '*',
-  credentials: false,
+  origin: (origin, callback) => {
+    callback(null, origin || true); // reflects the actual origin back
+  },
+  credentials: true,
 };
+
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 
