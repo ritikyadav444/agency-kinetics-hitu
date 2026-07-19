@@ -8,7 +8,6 @@ const Combined = require('../models/combinedModel');
 const { sendEmail } = require('../utils/emailService');
 const verifyTeamMail = require("../utils/jwtTokensTeams");
 const resetEmail = require("../utils/resetMail")
-const AWS = require("aws-sdk")
 const dotenv = require("dotenv");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const sharp = require('sharp');
@@ -65,9 +64,7 @@ exports.invite = async (req, res, next) => {
             });
             await token.save();
             // const verificationLink = `https://pr8hejpke8.execute-api.ap-south-1.amazonaws.com/v1/combined/verifyTeam/${token.token}`;
-            // const verificationLink = `https://api.agencykinetics.com/api/v1/combined/verifyTeam/${token.token}`;
-            // const verificationLink = `https://dashboard.agencykinetics.com/combined/verifyTeam/${token.token}`;
-            const verificationLink = `https://app.agencykinetics.com/combined/verifyTeam/${token.token}`;
+            const verificationLink = `${process.env.FRONTEND_URL}/combined/verifyTeam/${token.token}`;
 
             
 
@@ -92,21 +89,22 @@ exports.createClient = async (req, res, next) => {
         try {
             const body = req.body;
 
-            const { email, client_createdUnder } = body;
+            const { email } = body;
             body.role = 'CLIENT'
-            let client = await Combined.findOne({ email, client_createdUnder });
-            if (client) {
-                return res.status(400).json({ success: false, message: "Client with given workspace already exists!" });
-            }
             const SuperFname = req.SuperFname
             const SuperLname = req.SuperLname
             const loggedInUserName = req.SuperFname + ' ' + SuperLname;
             const combinedWorkSpaceName = req.combinedWorkSpaceName
             body.workspace_name = combinedWorkSpaceName
+            body.client_createdUnder = combinedWorkSpaceName
+            let client = await Combined.findOne({ email, client_createdUnder: combinedWorkSpaceName });
+            if (client) {
+                return res.status(400).json({ success: false, message: "Client with given workspace already exists!" });
+            }
             // console.log(clientData)
 
-            const lastClient = await Combined.findOne({}, {}, { sort: { clientId: -1 } });
-            body.clientId = lastClient ? lastClient.clientId + 1 : 1;
+            const lastClient = await Combined.findOne({ clientId: { $exists: true, $ne: null } }).sort({ clientId: -1 });
+            body.clientId = lastClient && lastClient.clientId ? lastClient.clientId + 1 : 1;
             body.password = req.body.password
             const clientData = body;
 
@@ -119,9 +117,7 @@ exports.createClient = async (req, res, next) => {
             await token.save();
 
             const emailSubject = 'Account Details';
-            // const clientLoginLink = `https://dashboard.agencykinetics.com/combined/login?workspace_name=${combinedWorkSpaceName}`;
-            // const clientLoginLink = `https://dashboard.agencykinetics.com/login?workspace_name=${combinedWorkSpaceName}`;
-            const clientLoginLink = `https://app.agencykinetics.com/login?workspace_name=${combinedWorkSpaceName}`;
+            const clientLoginLink = `${process.env.FRONTEND_URL}/login?workspace_name=${combinedWorkSpaceName}`;
             
 
             
@@ -170,8 +166,7 @@ exports.register = async (req, res, next) => {
             token: crypto.randomBytes(16).toString('hex')
         });
         await token.save();
-        // const link = `http://dash-kinetics.s3-website.ap-south-1.amazonaws.com/combined/confirm/${token.token}`;
-        const link = `https://api.agencykinetics.com/api/v1/combined/confirm/${token.token}`;
+        const link = `${process.env.API_URL}/api/v1/combined/confirm/${token.token}`;
 
         const email = user.email;
         const sName = user.fname + '  ' + user.lname
@@ -258,9 +253,7 @@ exports.activateToken = async (req, res, next) => {
         //     isVerified: true
 
         // });
-        // res.redirect(`https://dashboard.agencykinetics.com/combined/login?workspace_name=${user.workspace_name}`)
-        // res.redirect(`https://dashboard.agencykinetics.com/login?workspace_name=${user.workspace_name}`)
-        res.redirect(`https://app.agencykinetics.com/login?workspace_name=${user.workspace_name}`)
+        res.redirect(`${process.env.FRONTEND_URL}/login?workspace_name=${user.workspace_name}`)
 
 
 
@@ -782,8 +775,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     const resetToken = combined.getResetPasswordToken();
     await combined.save({ validateBeforeSave: false });
 
-    // const resetPasswordUrl = `http://dashboard.agencykinetics.com/password/reset/${resetToken}`;
-    const resetPasswordUrl = `http://app.agencykinetics.com/password/reset/${resetToken}`;
+    const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
 
     const htmlContent = `
          <html>

@@ -132,8 +132,8 @@ exports.payInvoice = async (req, res, next) => {
       }],
       mode: 'payment',
       customer_email: userEmail,
-      success_url: `https://app.agencykinetics.com/invoices`,
-      cancel_url: `https://app.agencykinetics.com/invoices`,
+      success_url: `${process.env.FRONTEND_URL}/invoices`,
+      cancel_url: `${process.env.FRONTEND_URL}/invoices`,
       payment_intent_data: {
         transfer_data: { destination: superAdmin.stripeAccountId },
       },

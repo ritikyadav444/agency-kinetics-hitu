@@ -100,8 +100,8 @@ exports.addOrUpdatePlanWithSync = async (req, res) => {
             // : true,
             //     },
             allow_promotion_codes:true,
-            success_url: `https://app.agencykinetics.com/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://app.agencykinetics.com/dashboard`,
+            success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/dashboard`,
             metadata: {
                 playRecursion,
                 selectedPlanIndex,
@@ -266,8 +266,8 @@ exports.createAccountLink = async (req, res) => {
   
       const accountLink = await stripe.accountLinks.create({
         account: account.id,
-        refresh_url: 'https://app.agencykinetics.com/onboard', 
-        return_url: 'https://app.agencykinetics.com/onboard', 
+        refresh_url: `${process.env.FRONTEND_URL}/onboard`,
+        return_url: `${process.env.FRONTEND_URL}/onboard`,
         type: 'account_onboarding',
       });
       

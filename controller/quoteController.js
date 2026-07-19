@@ -2,7 +2,6 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const Quote = require("../models/quoteModel");
 const ErrorHander = require("../utils/errorHander");
 const Service = require("../models/serviceModel");
-const AWS = require("aws-sdk")
 const dotenv = require("dotenv");
 const sharp = require('sharp');
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
