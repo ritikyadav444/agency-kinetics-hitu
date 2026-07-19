@@ -66,6 +66,9 @@ const stripe = require("./routes/stripeRoutes")
 const connectDatabase = require('./config/database');
 
 
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", uptime: process.uptime() });
+});
 
 app.use("/api/v1", task)
 app.use("/api/v1", order);
