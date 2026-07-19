@@ -619,7 +619,7 @@ exports.updateUserLoggedIn = async (req, res, next) => {
                 Key: `${process.env.DEV}/${combined._id}/profileImage/${fileName}`,
                 Body: compressedBuffer,
                 ContentType: 'image/jpeg',
-                ACL: 'public-read',
+
             };
             const command = new PutObjectCommand(params);
             const response = await s3Client.send(command);
@@ -661,7 +661,7 @@ exports.updateUserLoggedIn = async (req, res, next) => {
                 Key: `${process.env.DEV}/${combined._id}/companyLogo/${fileName}`,
                 Body: compressedBuffer,
                 ContentType: 'image/jpeg',
-                ACL: 'public-read',
+
             };
             const command = new PutObjectCommand(params);
             const response = await s3Client.send(command);

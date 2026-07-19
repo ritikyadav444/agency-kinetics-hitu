@@ -52,7 +52,7 @@ exports.createService = (async (req, res, next) => {
                     Key: `${process.env.DEV}/${combinedId}/services/${fileName}`,
                     Body: compressedBuffer,
                     ContentType: 'image/jpeg',
-                    ACL: 'public-read',
+
                 };
 
                 const command = new PutObjectCommand(params);
@@ -232,7 +232,7 @@ exports.updateService = async (req, res, next) => {
                     Key: `${process.env.DEV}/${created_by}/services/${fileName}`,
                     Body: compressedBuffer,
                     ContentType: 'image/jpeg',
-                    ACL: 'public-read',
+
                 };
 
                 const command = new PutObjectCommand(params);

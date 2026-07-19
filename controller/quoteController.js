@@ -55,7 +55,7 @@ exports.createQuote = (async (req, res, next) => {
                     Key: `${process.env.DEV}/${combinedId}/proposals/${filename.toLowerCase()}`,
                     Body: buffer,
                     ContentType: contentType,
-                    ACL: 'public-read',
+
                 };
 
                 const command = new PutObjectCommand(params);
@@ -208,7 +208,7 @@ exports.updateQuote = async (req, res, next) => {
                     Key: `${process.env.DEV}/${combinedId}/proposals/${filename.toLowerCase()}`,
                     Body: buffer,
                     ContentType: contentType,
-                    ACL: 'public-read',
+
                 };
 
                 const command = new PutObjectCommand(params);

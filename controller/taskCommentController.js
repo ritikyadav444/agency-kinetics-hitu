@@ -42,7 +42,7 @@ async function handleImage(attachment, taskId, combinedId) {
             Key: `${process.env.DEV}/${combinedId}/taskComment/${taskId}/${fileName}`,
             Body: compressedBuffer,
             ContentType: 'image/jpeg',
-            ACL: 'public-read',
+
         };
 
         const command = new PutObjectCommand(params);
@@ -80,7 +80,7 @@ async function handleDocuments(attachment, taskId, combinedId) {
             Key: `${process.env.DEV}/${combinedId}/taskComment/${taskId}/${fileName}`,
             Body: buffer,
             ContentType: contentType,
-            ACL: 'public-read',
+
         };
 
         const command = new PutObjectCommand(params);
