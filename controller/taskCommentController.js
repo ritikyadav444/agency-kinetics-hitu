@@ -10,7 +10,7 @@ dotenv.config()
 
 
 const s3Client = new S3Client({
-    region: "ap-south-1",
+    region: process.env.AWS_REGION,
     credentials: {
       accessKeyId: process.env.ACCESS_KEY,
       secretAccessKey: process.env.SECRET_ACCESS_KEY
@@ -39,16 +39,17 @@ async function handleImage(attachment, taskId, combinedId) {
         // Upload the compressed image to S3
         const params = {
             Bucket: process.env.BUCKET,
-            Key: `${process.env.DEV}/${combinedId}/taskComment/${taskId}/${fileName}`, // Define the path and file name in S3
+            Key: `${process.env.DEV}/${combinedId}/taskComment/${taskId}/${fileName}`,
             Body: compressedBuffer,
             ContentType: 'image/jpeg',
+            ACL: 'public-read',
         };
 
         const command = new PutObjectCommand(params);
         const response = await s3Client.send(command);
 
         // Generate the S3 URL
-        const s3Url = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
+        const s3Url = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
 
         console.log(s3Url, fileName);
 
@@ -76,16 +77,17 @@ async function handleDocuments(attachment, taskId, combinedId) {
         const fileName = attachment.name
         const params = {
             Bucket: process.env.BUCKET,
-            Key: `${process.env.DEV}/${combinedId}/taskComment/${taskId}/${fileName}`, // Define the path and file name in S3
+            Key: `${process.env.DEV}/${combinedId}/taskComment/${taskId}/${fileName}`,
             Body: buffer,
             ContentType: contentType,
+            ACL: 'public-read',
         };
 
         const command = new PutObjectCommand(params);
         const response = await s3Client.send(command);
 
         // Generate the S3 URL
-        const s3Url = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
+        const s3Url = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
 
         console.log(s3Url);
 

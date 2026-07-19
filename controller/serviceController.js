@@ -11,7 +11,7 @@ const sharp = require('sharp');
 dotenv.config()
 
 const s3Client = new S3Client({
-    region: "ap-south-1",
+    region: process.env.AWS_REGION,
     credentials: {
       accessKeyId: process.env.ACCESS_KEY,
       secretAccessKey: process.env.SECRET_ACCESS_KEY
@@ -49,15 +49,16 @@ exports.createService = (async (req, res, next) => {
 
                 const params = {
                     Bucket: process.env.BUCKET,
-                    Key: `${process.env.DEV}/${combinedId}/services/${fileName}`, // Define the path and file name in S3
+                    Key: `${process.env.DEV}/${combinedId}/services/${fileName}`,
                     Body: compressedBuffer,
                     ContentType: 'image/jpeg',
+                    ACL: 'public-read',
                 };
 
                 const command = new PutObjectCommand(params);
                 const response = await s3Client.send(command);
 
-                const s3Url = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
+                const s3Url = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
 
                 console.log(response);
                 console.log(s3Url);
@@ -65,7 +66,7 @@ exports.createService = (async (req, res, next) => {
                 req.body.service_cover_img = s3Url;
             } catch (error) {
                 console.error(error);
-                res.status(500).json({
+                return res.status(500).json({
                     success: false,
                     message: 'Error uploading image.',
                     services: copiedServices
@@ -228,15 +229,16 @@ exports.updateService = async (req, res, next) => {
                 const created_by = service.service_createdBy
                 const params = {
                     Bucket: process.env.BUCKET,
-                    Key: `${process.env.DEV}/${created_by}/services/${fileName}`, // Define the path and file name in S3
+                    Key: `${process.env.DEV}/${created_by}/services/${fileName}`,
                     Body: compressedBuffer,
                     ContentType: 'image/jpeg',
+                    ACL: 'public-read',
                 };
 
                 const command = new PutObjectCommand(params);
                 const response = await s3Client.send(command);
 
-                const s3Url = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
+                const s3Url = `https://${params.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
 
                 console.log(response);
                 console.log(s3Url);
@@ -246,7 +248,7 @@ exports.updateService = async (req, res, next) => {
 
             } catch (error) {
                 console.error(error);
-                res.status(500).json({
+                return res.status(500).json({
                     success: false,
                     message: 'Error uploading image.',
                     services: copiedServices
@@ -263,7 +265,7 @@ exports.updateService = async (req, res, next) => {
         service.value = req.body.value;
         service.unit = req.body.unit;
         service.currency = req.body.currency;
-        
+
         // Ensure service_amount is initialized as an object
         if (!service.service_amount) {
             service.service_amount = {}; // Initialize service_amount if it's not already an object
